@@ -44,7 +44,14 @@ button.v.on{background:var(--brand);border-color:var(--brand);color:#fff}
 button.v{background:var(--chip);border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:7px 0;font:500 12px var(--f-body);cursor:pointer}
 button.v:hover,#toggle:hover{border-color:var(--accent)}
 button:focus-visible,input:focus-visible,label.cat:focus-within{outline:2px solid var(--accent);outline-offset:1px}
-.cats{display:flex;flex-direction:column;gap:2px}
+.cats{display:flex;flex-direction:column;gap:6px}
+details.area{border:1px solid var(--line);border-radius:8px;padding:2px 4px 4px}
+details.area summary{display:grid;grid-template-columns:auto 1fr auto auto;gap:9px;align-items:center;padding:7px 6px;cursor:pointer;font-weight:600;font-size:13px;list-style:none}
+details.area summary::-webkit-details-marker{display:none}
+details.area summary::after{content:"▾";color:var(--muted);font-size:11px;transition:transform .15s}
+details.area:not([open]) summary::after{transform:rotate(-90deg)}
+details.area summary input{margin:0;accent-color:var(--brand)}
+details.area label.cat{padding-left:22px}
 label.cat{display:grid;grid-template-columns:auto 14px 1fr auto;gap:9px;align-items:center;padding:6px 6px;border-radius:6px;cursor:pointer;font-size:13px}
 label.cat:hover{background:var(--chip)}
 label.cat input{margin:0;accent-color:var(--accent)}
@@ -151,6 +158,15 @@ const CATS=[
   {id:'edi',label:'Edificação existente',color:'#d5d0c7',test:()=>true},
 ];
 const catOf=name=>CATS.find(c=>c.test(name.toUpperCase()));
+// Areas from the Rhino layer prefix
+const AREAS=[
+  {id:'pri',label:'Cobertura principal',test:n=>!/^(TD|ALP|MA) /.test(n)&&!/PREDIO|PLATIBANDA/.test(n)},
+  {id:'td',label:'Telhado duas águas',test:n=>/^TD /.test(n)},
+  {id:'alp',label:'Alpendre',test:n=>/^ALP /.test(n)},
+  {id:'ma',label:'MA',test:n=>/^MA /.test(n)},
+  {id:'edi',label:'Edificação existente',test:()=>true},
+];
+const areaOf=name=>AREAS.find(a=>a.test(name.toUpperCase()));
 
 const stage=document.getElementById('stage');
 const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
@@ -199,8 +215,8 @@ async function loadModel(){
     for(let i=0;i<d.length;i++){a+=d[i];idx[i]=a;}
     const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(pos,3)); g.setIndex(new THREE.BufferAttribute(idx,1));
     g.computeBoundingSphere();
-    const c=catOf(h.name), m=new THREE.Mesh(g,mats[c.id]); m.userData={layer:h.name,cat:c};
-    (groups[c.id]??=[]).push(m); root.add(m);
+    const c=catOf(h.name), ar=areaOf(h.name), m=new THREE.Mesh(g,mats[c.id]); m.userData={layer:h.name,cat:c,area:ar};
+    ((groups[ar.id]??={})[c.id]??=[]).push(m); root.add(m);
   }
   scene.add(root);
   box.setFromObject(root); box.getSize(size); box.getCenter(center);
@@ -213,16 +229,30 @@ loadModel().catch(err=>{progt.textContent='Não foi possível carregar o modelo.
 
 function buildLegend(){
   const el=document.getElementById('cats');
-  for(const c of CATS){
-    if(!groups[c.id])continue;
-    const lab=document.createElement('label'); lab.className='cat';
-    const pcs=groups[c.id].length;
-    lab.innerHTML=`<input type="checkbox" checked id="cb-${c.id}"><span class="sw" style="background:${c.color}"></span><span>${c.label}</span><span class="n">${pcs} cam.</span>`;
-    lab.querySelector('input').addEventListener('change',e=>{groups[c.id].forEach(m=>m.visible=e.target.checked);});
-    el.appendChild(lab);
+  for(const ar of AREAS){
+    const gs=groups[ar.id]; if(!gs)continue;
+    const box=document.createElement('details'); box.className='area'; box.open=true;
+    const nl=Object.values(gs).reduce((t,l)=>t+l.length,0);
+    box.innerHTML=`<summary><input type="checkbox" checked id="ar-${ar.id}" aria-label="${ar.label}"><span>${ar.label}</span><span class="n">${nl} cam.</span></summary>`;
+    const acb=box.querySelector('input');
+    acb.addEventListener('click',e=>e.stopPropagation());
+    const rows=[];
+    for(const c of CATS){
+      if(!gs[c.id])continue;
+      const lab=document.createElement('label'); lab.className='cat';
+      lab.innerHTML=`<input type="checkbox" checked><span class="sw" style="background:${c.color}"></span><span>${c.label}</span><span class="n">${gs[c.id].length} cam.</span>`;
+      const cb=lab.querySelector('input'); rows.push([cb,gs[c.id]]);
+      cb.addEventListener('change',()=>{gs[c.id].forEach(m=>m.visible=cb.checked);sync();});
+      box.appendChild(lab);
+    }
+    function sync(){const on=rows.filter(r=>r[0].checked).length;acb.checked=on>0;acb.indeterminate=on>0&&on<rows.length;}
+    acb.addEventListener('change',()=>{rows.forEach(([cb,ms])=>{cb.checked=acb.checked;ms.forEach(m=>m.visible=acb.checked);});acb.indeterminate=false;});
+    areaCtl.push({acb,rows});
+    el.appendChild(box);
   }
 }
-function setAll(v){for(const c of CATS){if(!groups[c.id])continue;groups[c.id].forEach(m=>m.visible=v);document.getElementById('cb-'+c.id).checked=v;}}
+const areaCtl=[];
+function setAll(v){for(const {acb,rows} of areaCtl){rows.forEach(([cb,ms])=>{cb.checked=v;ms.forEach(m=>m.visible=v);});acb.checked=v;acb.indeterminate=false;}}
 document.getElementById('all').onclick=()=>setAll(true);
 document.getElementById('none').onclick=()=>setAll(false);
 
@@ -264,7 +294,7 @@ renderer.domElement.addEventListener('pointerup',e=>{
   if(picked){picked.material=mats[picked.userData.cat.id];picked=null;}
   if(hit){picked=hit.object;picked.material=hiMat;
     document.getElementById('infoName').textContent=picked.userData.layer;
-    document.getElementById('infoCat').textContent=picked.userData.cat.label;info.hidden=false;}
+    document.getElementById('infoCat').textContent=picked.userData.area.label+' · '+picked.userData.cat.label;info.hidden=false;}
   else info.hidden=true;
 });
 
