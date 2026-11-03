@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>Cobertura Bethesda 3D</title>
+<meta name="theme-color" content="#00a1ff">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Comfortaa:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: full-bleed 3D viewport, floating spec panel on the left (bottom sheet on phones) */
 :root{
-  --bg:#e9ecef; --sky:#dfe4e8; --panel:#ffffffee; --fg:#1d242b; --muted:#5d6872; --line:#d3d9de;
-  --accent:#d1631f; --chip:#f1f3f5;
-  --f-display:"Archivo",system-ui,sans-serif; --f-body:"Archivo",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+  --bg:#eef2f5; --sky:#e8edf1; --panel:#ffffffef; --fg:#0d1014; --muted:#5a6672; --line:#d6dde3;
+  --brand:#00a1ff; --brand-ink:#0077c2; --accent:#00a1ff; --chip:#f2f5f8;
+  --f-display:"Comfortaa","Montserrat",system-ui,sans-serif; --f-body:"Montserrat",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#14181c; --sky:#1b2026; --panel:#1d2329ee; --fg:#e6eaee; --muted:#93a0ab; --line:#2e363e; --accent:#ef8a45; --chip:#262d34; color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#14181c; --sky:#1b2026; --panel:#1d2329ee; --fg:#e6eaee; --muted:#93a0ab; --line:#2e363e; --accent:#ef8a45; --chip:#262d34; color-scheme:dark}
-*{box-sizing:border-box}
+  --bg:#0b0e12; --sky:#10141a; --panel:#151a21ee; --fg:#eef2f6; --muted:#8e9aa6; --line:#252d36; --brand-ink:#4dbdff; --chip:#1c232b; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b0e12; --sky:#10141a; --panel:#151a21ee; --fg:#eef2f6; --muted:#8e9aa6; --line:#252d36; --brand-ink:#4dbdff; --chip:#1c232b; color-scheme:dark}
 html,body{height:100%}
 body{margin:0;font-size:14px}
 [hidden]{display:none!important}
@@ -28,12 +28,19 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);overflow:hid
   display:flex;flex-direction:column;background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:10px;overflow:hidden;z-index:5}
 .head{padding:14px 16px 12px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
 .head .t{flex:1;min-width:0}
-.eyebrow{font:500 10.5px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-h1{font:700 19px/1.15 var(--f-display);margin:6px 0 4px;text-wrap:balance}
+.eyebrow{font:600 10.5px/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font:700 19px/1.2 var(--f-display);margin:6px 0 4px;text-wrap:balance;letter-spacing:-.01em}
+.logo{display:block;height:26px;width:auto;color:var(--fg);margin:0 0 14px}
+.logo .b{fill:var(--brand)}
+#loader .logo{height:34px;margin:0 auto 18px}
+.head{border-top:3px solid var(--brand)}
+.eyebrow{color:var(--brand-ink)!important}
+label.cat input:checked{accent-color:var(--brand)}
+button.v.on{background:var(--brand);border-color:var(--brand);color:#fff}
 .sub{font-size:12.5px;color:var(--muted)}
 #toggle{display:none;background:var(--chip);border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:6px 10px;font:500 12px var(--f-body);cursor:pointer}
 .body{overflow:auto;padding:12px 16px 16px;display:flex;flex-direction:column;gap:16px}
-.sec h2{font:600 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.sec h2{font:600 11px/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
 .views{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 button.v{background:var(--chip);border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:7px 0;font:500 12px var(--f-body);cursor:pointer}
 button.v:hover,#toggle:hover{border-color:var(--accent)}
@@ -63,6 +70,10 @@ label.cat input{margin:0;accent-color:var(--accent)}
   .body{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
   .panel.closed .body{display:none}
   #toggle{display:block}
+  .panel .logo{height:20px;margin-bottom:8px}
+  h1{font-size:16px;margin:4px 0 0}
+  .panel.closed .sub{display:none}
+  .head{padding-top:12px;padding-bottom:10px}
   .hint{display:none}
   #info{left:max(16px,env(safe-area-inset-left,0px));right:auto}
 }
@@ -76,9 +87,10 @@ label.cat input{margin:0;accent-color:var(--accent)}
 <aside class="panel" id="panel">
   <div class="head">
     <div class="t">
-      <div class="eyebrow">Comforma · Perville</div>
+      <svg class="logo" viewBox="13 130 271 50" role="img" aria-label="Comforma Estruturas Metálicas" xmlns="http://www.w3.org/2000/svg"><path d="M35.6,141.6h16.2c5.9,0,10.7-4.8,10.7-10.7h-26.9c-11.8,0-21.4,9.6-21.4,21.4v26.9h26.9v-13.4h2.7c4.4,0,8.1-3.6,8.1-8.1h-21.5s0,10.7,0,10.7h-5.4v-16.2c0-5.9,4.8-10.6,10.7-10.6ZM32.2,170.4v-10.7h17.2c-.8,2.4-3.1,4.1-5.7,4.1h-4.7v13.4h-22.9v-24.9c0-10.7,8.7-19.5,19.5-19.5h24.7c-.9,4-4.5,6.8-8.5,6.8h-16.2c-7,0-12.7,5.7-12.7,12.7h0c0,.1,0,18.2,0,18.2h9.4Z"/><path class="b" d="M41,144.3c-5.9,0-10.7,4.8-10.7,10.7h16.1c5.9,0,10.7-4.8,10.7-10.7h-16.1ZM46.3,153h-13.9c.9-4,4.5-6.8,8.5-6.8h13.9c-.9,4-4.5,6.8-8.5,6.8Z"/><path d="M98.6,144.1c3,0,5.6,1.1,7.7,3.2,2.1,2.1,3.2,4.7,3.2,7.7s-1.1,5.6-3.2,7.7c-2.1,2.1-4.7,3.2-7.7,3.2s-5.6-1.1-7.7-3.2c-2.1-2.1-3.2-4.7-3.2-7.7s1.1-5.6,3.2-7.7c2.1-2.1,4.7-3.2,7.7-3.2ZM98.6,161.6c1.8,0,3.3-.6,4.6-1.9,1.3-1.3,1.9-2.8,1.9-4.6s-.6-3.3-1.9-4.6-2.8-1.9-4.6-1.9-3.3.6-4.6,1.9c-1.3,1.3-1.9,2.8-1.9,4.6s.6,3.3,1.9,4.6c1.3,1.3,2.8,1.9,4.6,1.9Z"/><path d="M141.2,144.1c3,0,5.6,1.1,7.7,3.2,2.1,2.1,3.2,4.7,3.2,7.7v10.9h-4.3v-10.9c0-1.8-.6-3.3-1.9-4.6-1.3-1.3-2.8-1.9-4.6-1.9s-3.3.6-4.6,1.9-1.9,2.8-1.9,4.6v10.9h-4.4v-10.9c0-1.8-.6-3.3-1.9-4.6s-2.8-1.9-4.6-1.9-3.3.6-4.6,1.9c-1.3,1.3-1.9,2.8-1.9,4.6v10.9h-4.3v-10.9c0-3,1.1-5.6,3.2-7.7,2.1-2.1,4.7-3.2,7.7-3.2s6.5,1.5,8.7,4.4c2.2-2.9,5.1-4.4,8.7-4.4Z"/><path class="b" d="M167.2,137.6c-1.8,0-3.3.6-4.6,1.9-1.3,1.3-1.9,2.8-1.9,4.6h8.7v4.4h-8.7v17.4h-4.3v-21.8c0-3,1.1-5.6,3.2-7.7,2.1-2.1,4.7-3.2,7.7-3.2h4.3v4.4h-4.3Z"/><path class="b" d="M184.4,144.1c3,0,5.6,1.1,7.7,3.2,2.1,2.1,3.2,4.7,3.2,7.7s-1.1,5.6-3.2,7.7c-2.1,2.1-4.7,3.2-7.7,3.2s-5.6-1.1-7.7-3.2c-2.1-2.1-3.2-4.7-3.2-7.7s1.1-5.6,3.2-7.7c2.1-2.1,4.7-3.2,7.7-3.2ZM184.4,161.6c1.8,0,3.3-.6,4.6-1.9,1.3-1.3,1.9-2.8,1.9-4.6s-.6-3.3-1.9-4.6-2.8-1.9-4.6-1.9-3.3.6-4.6,1.9c-1.3,1.3-1.9,2.8-1.9,4.6s.6,3.3,1.9,4.6c1.3,1.3,2.8,1.9,4.6,1.9Z"/><path class="b" d="M198.7,165.9v-10.9c0-3,1.1-5.6,3.2-7.7,2.1-2.1,4.7-3.2,7.7-3.2h4.3v4.4h-4.3c-1.8,0-3.3.6-4.6,1.9-1.3,1.3-1.9,2.8-1.9,4.6v10.9h-4.3Z"/><path class="b" d="M245.7,144.1c3,0,5.6,1.1,7.7,3.2,2.1,2.1,3.2,4.7,3.2,7.7v10.9h-4.3v-10.9c0-1.8-.6-3.3-1.9-4.6-1.3-1.3-2.8-1.9-4.6-1.9s-3.3.6-4.6,1.9-1.9,2.8-1.9,4.6v10.9h-4.4v-10.9c0-1.8-.6-3.3-1.9-4.6s-2.8-1.9-4.6-1.9-3.3.6-4.6,1.9c-1.3,1.3-1.9,2.8-1.9,4.6v10.9h-4.3v-10.9c0-3,1.1-5.6,3.2-7.7,2.1-2.1,4.7-3.2,7.7-3.2s6.5,1.5,8.7,4.4c2.2-2.9,5.1-4.4,8.7-4.4Z"/><path class="b" d="M271.8,144.1c3,0,5.6,1.1,7.7,3.2,2.1,2.1,3.2,4.7,3.2,7.7v10.9h-10.9c-3,0-5.6-1.1-7.7-3.2-2.1-2.1-3.2-4.7-3.2-7.7s1.1-5.6,3.2-7.7c2.1-2.1,4.7-3.2,7.7-3.2ZM278.3,155c0-1.8-.6-3.3-1.9-4.6s-2.8-1.9-4.6-1.9-3.3.6-4.6,1.9c-1.3,1.3-1.9,2.8-1.9,4.6s.6,3.3,1.9,4.6c1.3,1.3,2.8,1.9,4.6,1.9h6.5v-6.6Z"/><path d="M73.6,148.5c1.4,0,2.7.4,3.8,1.2,1.1.8,1.9,1.9,2.3,3.1h4.5c-.3-1.7-1-3.1-2-4.4-.5-.7-1.1-1.3-1.8-1.8-2-1.7-4.3-2.5-6.9-2.5s-5.6,1.1-7.7,3.2c-2.1,2.1-3.2,4.7-3.2,7.7s1.1,5.6,3.2,7.7c2.1,2.1,4.7,3.2,7.7,3.2s4.9-.8,6.9-2.5c.7-.6,1.3-1.2,1.8-1.8,1-1.3,1.6-2.7,2-4.4h-4.5c-.4,1.3-1.2,2.3-2.3,3.1-1.1.8-2.4,1.2-3.8,1.2s-3.3-.6-4.6-1.9c-1.3-1.3-1.9-2.8-1.9-4.6s.6-3.3,1.9-4.6c1.3-1.3,2.8-1.9,4.6-1.9Z"/><path d="M156.9,178.2h3.3v.8h-4.2v-6.4h4.1v.8h-3.2v1.9h3v.8h-3v2.1Z"/><path d="M165.7,173.9c-.1-.2-.3-.3-.5-.4-.2-.1-.5-.2-.7-.2s-.3,0-.4,0-.3.1-.4.2-.2.2-.3.3c0,.1-.1.3-.1.5s0,.3.1.4c0,.1.2.2.3.3s.3.2.4.2.3.1.5.2c.2,0,.4.1.7.2.2,0,.4.2.6.3.2.1.3.3.4.5.1.2.2.5.2.8s0,.6-.2.9c-.1.2-.3.4-.5.6s-.4.3-.7.4c-.3,0-.5.1-.8.1-.4,0-.8,0-1.2-.2-.4-.2-.7-.4-.9-.7l.7-.6c.1.2.3.4.6.5.3.1.5.2.8.2s.3,0,.4,0c.1,0,.3-.1.4-.2s.2-.2.3-.3c0-.1.1-.3.1-.5s0-.4-.1-.5c0-.1-.2-.2-.3-.3-.1,0-.3-.2-.5-.2-.2,0-.4-.1-.6-.2-.2,0-.4-.1-.6-.2s-.4-.2-.5-.3-.3-.3-.4-.5c0-.2-.1-.4-.1-.7s0-.6.2-.8c.1-.2.3-.4.5-.6.2-.2.4-.3.7-.3.3,0,.5-.1.8-.1s.7,0,1,.2.6.3.8.5l-.6.6Z"/><path d="M170.8,179h-.9v-5.6h-2v-.8h5v.8h-2v5.6Z"/><path d="M175.6,179h-.9v-6.4h2c.3,0,.6,0,.9,0,.3,0,.5.2.7.3.2.1.4.3.5.5.1.2.2.5.2.8,0,.5-.1.8-.4,1.1s-.7.5-1.1.5l1.8,2.9h-1.1l-1.6-2.8h-1v2.8ZM175.6,175.5h1c.2,0,.4,0,.6,0,.2,0,.3,0,.5-.2.1,0,.2-.2.3-.3,0-.1.1-.3.1-.5s0-.4-.1-.5c0-.1-.2-.2-.3-.3-.1,0-.3-.1-.5-.2s-.4,0-.5,0h-1.1v2Z"/><path d="M183.8,179.2c-.4,0-.8,0-1.1-.2-.3-.1-.6-.3-.8-.6-.2-.2-.4-.5-.5-.8,0-.3-.1-.6-.1-.9v-4h.9v4c0,.2,0,.4,0,.6s.1.4.3.6.3.3.5.4c.2.1.5.2.8.2s.5,0,.7-.2c.2-.1.4-.2.5-.4s.2-.4.3-.6,0-.4,0-.6v-4h.9v4c0,.3,0,.6-.1.9,0,.3-.2.6-.5.8-.2.2-.5.4-.8.6-.3.1-.7.2-1.1.2Z"/><path d="M191,179h-.9v-5.6h-2v-.8h5v.8h-2v5.6Z"/><path d="M197.4,179.2c-.4,0-.8,0-1.1-.2-.3-.1-.6-.3-.8-.6-.2-.2-.4-.5-.5-.8,0-.3-.1-.6-.1-.9v-4h.9v4c0,.2,0,.4,0,.6s.1.4.3.6.3.3.5.4c.2.1.5.2.8.2s.5,0,.7-.2c.2-.1.4-.2.5-.4s.2-.4.3-.6,0-.4,0-.6v-4h.9v4c0,.3,0,.6-.1.9,0,.3-.2.6-.5.8-.2.2-.5.4-.8.6-.3.1-.7.2-1.1.2Z"/><path d="M203.4,179h-.9v-6.4h2c.3,0,.6,0,.9,0,.3,0,.5.2.7.3.2.1.4.3.5.5.1.2.2.5.2.8,0,.5-.1.8-.4,1.1s-.7.5-1.1.5l1.8,2.9h-1.1l-1.6-2.8h-1v2.8ZM203.4,175.5h1c.2,0,.4,0,.6,0,.2,0,.3,0,.5-.2.1,0,.2-.2.3-.3,0-.1.1-.3.1-.5s0-.4-.1-.5c0-.1-.2-.2-.3-.3-.1,0-.3-.1-.5-.2s-.4,0-.5,0h-1.1v2Z"/><path d="M209.3,179h-1l2.8-6.4h.8l2.7,6.4h-1l-.6-1.6h-3l-.6,1.6ZM210.3,176.7h2.4l-1.2-3-1.2,3Z"/><path d="M219.7,173.9c-.1-.2-.3-.3-.5-.4-.2-.1-.5-.2-.7-.2s-.3,0-.4,0c-.1,0-.3.1-.4.2s-.2.2-.3.3c0,.1-.1.3-.1.5s0,.3.1.4.2.2.3.3c.1,0,.3.2.4.2.2,0,.3.1.5.2.2,0,.4.1.7.2s.4.2.6.3c.2.1.3.3.4.5s.2.5.2.8,0,.6-.2.9c-.1.2-.3.4-.5.6s-.4.3-.7.4c-.3,0-.5.1-.8.1-.4,0-.8,0-1.2-.2-.4-.2-.7-.4-.9-.7l.7-.6c.1.2.3.4.6.5.3.1.5.2.8.2s.3,0,.4,0c.1,0,.3-.1.4-.2s.2-.2.3-.3c0-.1.1-.3.1-.5s0-.4-.1-.5c0-.1-.2-.2-.3-.3-.1,0-.3-.2-.5-.2-.2,0-.4-.1-.6-.2-.2,0-.4-.1-.6-.2-.2,0-.4-.2-.5-.3s-.3-.3-.4-.5c0-.2-.1-.4-.1-.7s0-.6.2-.8c.1-.2.3-.4.5-.6.2-.2.4-.3.7-.3.3,0,.5-.1.8-.1s.7,0,1,.2.6.3.8.5l-.6.6Z"/><path d="M229.3,177.6h0l1.9-4.9h1.4v6.4h-.9v-5.3h0l-2.1,5.3h-.6l-2.1-5.3h0v5.3h-.9v-6.4h1.4l1.9,4.9Z"/><path d="M236.1,178.2h3.3v.8h-4.2v-6.4h4.1v.8h-3.2v1.9h3v.8h-3v2.1Z"/><path d="M243.9,179h-.9v-5.6h-2v-.8h5v.8h-2v5.6Z"/><path d="M247.6,179h-1l2.8-6.4h.8l2.7,6.4h-1l-.6-1.6h-3l-.6,1.6ZM248.6,176.7h2.4l-1.2-3-1.2,3ZM250.1,172.2h-.7l.9-1.3h1l-1.2,1.3Z"/><path d="M255.7,178.2h2.8v.8h-3.7v-6.4h.9v5.6Z"/><path d="M261.4,179h-.9v-6.4h.9v6.4Z"/><path d="M269.4,178c-.3.3-.6.6-1,.8s-.9.3-1.4.3-.9,0-1.3-.2c-.4-.2-.8-.4-1.1-.7s-.5-.6-.7-1.1c-.2-.4-.3-.9-.3-1.4s0-.9.3-1.4c.2-.4.4-.8.7-1.1.3-.3.7-.5,1.1-.7s.9-.2,1.3-.2.4,0,.7,0,.4.1.6.2.4.2.6.3.3.3.4.4l-.7.5c-.2-.2-.4-.4-.7-.5-.3-.1-.6-.2-.9-.2s-.7,0-1,.2c-.3.1-.5.3-.8.6-.2.2-.4.5-.5.8-.1.3-.2.6-.2,1s0,.7.2,1c.1.3.3.6.5.8.2.2.5.4.8.5s.6.2,1,.2.7,0,1-.2c.3-.1.5-.4.7-.6l.7.5Z"/><path d="M271.6,179h-1l2.8-6.4h.8l2.7,6.4h-1l-.6-1.6h-3l-.6,1.6ZM272.5,176.7h2.4l-1.2-3-1.2,3Z"/><path d="M281.9,173.9c-.1-.2-.3-.3-.5-.4-.2-.1-.5-.2-.7-.2s-.3,0-.4,0c-.1,0-.3.1-.4.2s-.2.2-.3.3c0,.1-.1.3-.1.5s0,.3.1.4.2.2.3.3c.1,0,.3.2.4.2.2,0,.3.1.5.2.2,0,.4.1.7.2s.4.2.6.3c.2.1.3.3.4.5s.2.5.2.8,0,.6-.2.9c-.1.2-.3.4-.5.6s-.4.3-.7.4c-.3,0-.5.1-.8.1-.4,0-.8,0-1.2-.2-.4-.2-.7-.4-.9-.7l.7-.6c.1.2.3.4.6.5.3.1.5.2.8.2s.3,0,.4,0c.1,0,.3-.1.4-.2s.2-.2.3-.3c0-.1.1-.3.1-.5s0-.4-.1-.5c0-.1-.2-.2-.3-.3-.1,0-.3-.2-.5-.2-.2,0-.4-.1-.6-.2-.2,0-.4-.1-.6-.2-.2,0-.4-.2-.5-.3s-.3-.3-.4-.5c0-.2-.1-.4-.1-.7s0-.6.2-.8c.1-.2.3-.4.5-.6.2-.2.4-.3.7-.3.3,0,.5-.1.8-.1s.7,0,1,.2.6.3.8.5l-.6.6Z"/></svg>
+      <div class="eyebrow">Obra · Perville</div>
       <h1>Cobertura Bethesda</h1>
-      <div class="sub">Estrutura metálica da cobertura, modelo V4</div>
+      <div class="sub">Estrutura metálica da cobertura · modelo V4</div>
     </div>
     <button id="toggle" type="button" aria-expanded="false">Opções</button>
   </div>
@@ -111,7 +123,8 @@ label.cat input{margin:0;accent-color:var(--accent)}
 <div class="hint">arrastar: girar · botão direito/2 dedos: mover · roda/pinça: zoom · clique: identificar peça</div>
 
 <div id="loader"><div class="box">
-  <div class="eyebrow">Carregando modelo</div>
+  <svg class="logo" viewBox="13 130 271 50" role="img" aria-label="Comforma Estruturas Metálicas" xmlns="http://www.w3.org/2000/svg"><path d="M35.6,141.6h16.2c5.9,0,10.7-4.8,10.7-10.7h-26.9c-11.8,0-21.4,9.6-21.4,21.4v26.9h26.9v-13.4h2.7c4.4,0,8.1-3.6,8.1-8.1h-21.5s0,10.7,0,10.7h-5.4v-16.2c0-5.9,4.8-10.6,10.7-10.6ZM32.2,170.4v-10.7h17.2c-.8,2.4-3.1,4.1-5.7,4.1h-4.7v13.4h-22.9v-24.9c0-10.7,8.7-19.5,19.5-19.5h24.7c-.9,4-4.5,6.8-8.5,6.8h-16.2c-7,0-12.7,5.7-12.7,12.7h0c0,.1,0,18.2,0,18.2h9.4Z"/><path class="b" d="M41,144.3c-5.9,0-10.7,4.8-10.7,10.7h16.1c5.9,0,10.7-4.8,10.7-10.7h-16.1ZM46.3,153h-13.9c.9-4,4.5-6.8,8.5-6.8h13.9c-.9,4-4.5,6.8-8.5,6.8Z"/><path d="M98.6,144.1c3,0,5.6,1.1,7.7,3.2,2.1,2.1,3.2,4.7,3.2,7.7s-1.1,5.6-3.2,7.7c-2.1,2.1-4.7,3.2-7.7,3.2s-5.6-1.1-7.7-3.2c-2.1-2.1-3.2-4.7-3.2-7.7s1.1-5.6,3.2-7.7c2.1-2.1,4.7-3.2,7.7-3.2ZM98.6,161.6c1.8,0,3.3-.6,4.6-1.9,1.3-1.3,1.9-2.8,1.9-4.6s-.6-3.3-1.9-4.6-2.8-1.9-4.6-1.9-3.3.6-4.6,1.9c-1.3,1.3-1.9,2.8-1.9,4.6s.6,3.3,1.9,4.6c1.3,1.3,2.8,1.9,4.6,1.9Z"/><path d="M141.2,144.1c3,0,5.6,1.1,7.7,3.2,2.1,2.1,3.2,4.7,3.2,7.7v10.9h-4.3v-10.9c0-1.8-.6-3.3-1.9-4.6-1.3-1.3-2.8-1.9-4.6-1.9s-3.3.6-4.6,1.9-1.9,2.8-1.9,4.6v10.9h-4.4v-10.9c0-1.8-.6-3.3-1.9-4.6s-2.8-1.9-4.6-1.9-3.3.6-4.6,1.9c-1.3,1.3-1.9,2.8-1.9,4.6v10.9h-4.3v-10.9c0-3,1.1-5.6,3.2-7.7,2.1-2.1,4.7-3.2,7.7-3.2s6.5,1.5,8.7,4.4c2.2-2.9,5.1-4.4,8.7-4.4Z"/><path class="b" d="M167.2,137.6c-1.8,0-3.3.6-4.6,1.9-1.3,1.3-1.9,2.8-1.9,4.6h8.7v4.4h-8.7v17.4h-4.3v-21.8c0-3,1.1-5.6,3.2-7.7,2.1-2.1,4.7-3.2,7.7-3.2h4.3v4.4h-4.3Z"/><path class="b" d="M184.4,144.1c3,0,5.6,1.1,7.7,3.2,2.1,2.1,3.2,4.7,3.2,7.7s-1.1,5.6-3.2,7.7c-2.1,2.1-4.7,3.2-7.7,3.2s-5.6-1.1-7.7-3.2c-2.1-2.1-3.2-4.7-3.2-7.7s1.1-5.6,3.2-7.7c2.1-2.1,4.7-3.2,7.7-3.2ZM184.4,161.6c1.8,0,3.3-.6,4.6-1.9,1.3-1.3,1.9-2.8,1.9-4.6s-.6-3.3-1.9-4.6-2.8-1.9-4.6-1.9-3.3.6-4.6,1.9c-1.3,1.3-1.9,2.8-1.9,4.6s.6,3.3,1.9,4.6c1.3,1.3,2.8,1.9,4.6,1.9Z"/><path class="b" d="M198.7,165.9v-10.9c0-3,1.1-5.6,3.2-7.7,2.1-2.1,4.7-3.2,7.7-3.2h4.3v4.4h-4.3c-1.8,0-3.3.6-4.6,1.9-1.3,1.3-1.9,2.8-1.9,4.6v10.9h-4.3Z"/><path class="b" d="M245.7,144.1c3,0,5.6,1.1,7.7,3.2,2.1,2.1,3.2,4.7,3.2,7.7v10.9h-4.3v-10.9c0-1.8-.6-3.3-1.9-4.6-1.3-1.3-2.8-1.9-4.6-1.9s-3.3.6-4.6,1.9-1.9,2.8-1.9,4.6v10.9h-4.4v-10.9c0-1.8-.6-3.3-1.9-4.6s-2.8-1.9-4.6-1.9-3.3.6-4.6,1.9c-1.3,1.3-1.9,2.8-1.9,4.6v10.9h-4.3v-10.9c0-3,1.1-5.6,3.2-7.7,2.1-2.1,4.7-3.2,7.7-3.2s6.5,1.5,8.7,4.4c2.2-2.9,5.1-4.4,8.7-4.4Z"/><path class="b" d="M271.8,144.1c3,0,5.6,1.1,7.7,3.2,2.1,2.1,3.2,4.7,3.2,7.7v10.9h-10.9c-3,0-5.6-1.1-7.7-3.2-2.1-2.1-3.2-4.7-3.2-7.7s1.1-5.6,3.2-7.7c2.1-2.1,4.7-3.2,7.7-3.2ZM278.3,155c0-1.8-.6-3.3-1.9-4.6s-2.8-1.9-4.6-1.9-3.3.6-4.6,1.9c-1.3,1.3-1.9,2.8-1.9,4.6s.6,3.3,1.9,4.6c1.3,1.3,2.8,1.9,4.6,1.9h6.5v-6.6Z"/><path d="M73.6,148.5c1.4,0,2.7.4,3.8,1.2,1.1.8,1.9,1.9,2.3,3.1h4.5c-.3-1.7-1-3.1-2-4.4-.5-.7-1.1-1.3-1.8-1.8-2-1.7-4.3-2.5-6.9-2.5s-5.6,1.1-7.7,3.2c-2.1,2.1-3.2,4.7-3.2,7.7s1.1,5.6,3.2,7.7c2.1,2.1,4.7,3.2,7.7,3.2s4.9-.8,6.9-2.5c.7-.6,1.3-1.2,1.8-1.8,1-1.3,1.6-2.7,2-4.4h-4.5c-.4,1.3-1.2,2.3-2.3,3.1-1.1.8-2.4,1.2-3.8,1.2s-3.3-.6-4.6-1.9c-1.3-1.3-1.9-2.8-1.9-4.6s.6-3.3,1.9-4.6c1.3-1.3,2.8-1.9,4.6-1.9Z"/><path d="M156.9,178.2h3.3v.8h-4.2v-6.4h4.1v.8h-3.2v1.9h3v.8h-3v2.1Z"/><path d="M165.7,173.9c-.1-.2-.3-.3-.5-.4-.2-.1-.5-.2-.7-.2s-.3,0-.4,0-.3.1-.4.2-.2.2-.3.3c0,.1-.1.3-.1.5s0,.3.1.4c0,.1.2.2.3.3s.3.2.4.2.3.1.5.2c.2,0,.4.1.7.2.2,0,.4.2.6.3.2.1.3.3.4.5.1.2.2.5.2.8s0,.6-.2.9c-.1.2-.3.4-.5.6s-.4.3-.7.4c-.3,0-.5.1-.8.1-.4,0-.8,0-1.2-.2-.4-.2-.7-.4-.9-.7l.7-.6c.1.2.3.4.6.5.3.1.5.2.8.2s.3,0,.4,0c.1,0,.3-.1.4-.2s.2-.2.3-.3c0-.1.1-.3.1-.5s0-.4-.1-.5c0-.1-.2-.2-.3-.3-.1,0-.3-.2-.5-.2-.2,0-.4-.1-.6-.2-.2,0-.4-.1-.6-.2s-.4-.2-.5-.3-.3-.3-.4-.5c0-.2-.1-.4-.1-.7s0-.6.2-.8c.1-.2.3-.4.5-.6.2-.2.4-.3.7-.3.3,0,.5-.1.8-.1s.7,0,1,.2.6.3.8.5l-.6.6Z"/><path d="M170.8,179h-.9v-5.6h-2v-.8h5v.8h-2v5.6Z"/><path d="M175.6,179h-.9v-6.4h2c.3,0,.6,0,.9,0,.3,0,.5.2.7.3.2.1.4.3.5.5.1.2.2.5.2.8,0,.5-.1.8-.4,1.1s-.7.5-1.1.5l1.8,2.9h-1.1l-1.6-2.8h-1v2.8ZM175.6,175.5h1c.2,0,.4,0,.6,0,.2,0,.3,0,.5-.2.1,0,.2-.2.3-.3,0-.1.1-.3.1-.5s0-.4-.1-.5c0-.1-.2-.2-.3-.3-.1,0-.3-.1-.5-.2s-.4,0-.5,0h-1.1v2Z"/><path d="M183.8,179.2c-.4,0-.8,0-1.1-.2-.3-.1-.6-.3-.8-.6-.2-.2-.4-.5-.5-.8,0-.3-.1-.6-.1-.9v-4h.9v4c0,.2,0,.4,0,.6s.1.4.3.6.3.3.5.4c.2.1.5.2.8.2s.5,0,.7-.2c.2-.1.4-.2.5-.4s.2-.4.3-.6,0-.4,0-.6v-4h.9v4c0,.3,0,.6-.1.9,0,.3-.2.6-.5.8-.2.2-.5.4-.8.6-.3.1-.7.2-1.1.2Z"/><path d="M191,179h-.9v-5.6h-2v-.8h5v.8h-2v5.6Z"/><path d="M197.4,179.2c-.4,0-.8,0-1.1-.2-.3-.1-.6-.3-.8-.6-.2-.2-.4-.5-.5-.8,0-.3-.1-.6-.1-.9v-4h.9v4c0,.2,0,.4,0,.6s.1.4.3.6.3.3.5.4c.2.1.5.2.8.2s.5,0,.7-.2c.2-.1.4-.2.5-.4s.2-.4.3-.6,0-.4,0-.6v-4h.9v4c0,.3,0,.6-.1.9,0,.3-.2.6-.5.8-.2.2-.5.4-.8.6-.3.1-.7.2-1.1.2Z"/><path d="M203.4,179h-.9v-6.4h2c.3,0,.6,0,.9,0,.3,0,.5.2.7.3.2.1.4.3.5.5.1.2.2.5.2.8,0,.5-.1.8-.4,1.1s-.7.5-1.1.5l1.8,2.9h-1.1l-1.6-2.8h-1v2.8ZM203.4,175.5h1c.2,0,.4,0,.6,0,.2,0,.3,0,.5-.2.1,0,.2-.2.3-.3,0-.1.1-.3.1-.5s0-.4-.1-.5c0-.1-.2-.2-.3-.3-.1,0-.3-.1-.5-.2s-.4,0-.5,0h-1.1v2Z"/><path d="M209.3,179h-1l2.8-6.4h.8l2.7,6.4h-1l-.6-1.6h-3l-.6,1.6ZM210.3,176.7h2.4l-1.2-3-1.2,3Z"/><path d="M219.7,173.9c-.1-.2-.3-.3-.5-.4-.2-.1-.5-.2-.7-.2s-.3,0-.4,0c-.1,0-.3.1-.4.2s-.2.2-.3.3c0,.1-.1.3-.1.5s0,.3.1.4.2.2.3.3c.1,0,.3.2.4.2.2,0,.3.1.5.2.2,0,.4.1.7.2s.4.2.6.3c.2.1.3.3.4.5s.2.5.2.8,0,.6-.2.9c-.1.2-.3.4-.5.6s-.4.3-.7.4c-.3,0-.5.1-.8.1-.4,0-.8,0-1.2-.2-.4-.2-.7-.4-.9-.7l.7-.6c.1.2.3.4.6.5.3.1.5.2.8.2s.3,0,.4,0c.1,0,.3-.1.4-.2s.2-.2.3-.3c0-.1.1-.3.1-.5s0-.4-.1-.5c0-.1-.2-.2-.3-.3-.1,0-.3-.2-.5-.2-.2,0-.4-.1-.6-.2-.2,0-.4-.1-.6-.2-.2,0-.4-.2-.5-.3s-.3-.3-.4-.5c0-.2-.1-.4-.1-.7s0-.6.2-.8c.1-.2.3-.4.5-.6.2-.2.4-.3.7-.3.3,0,.5-.1.8-.1s.7,0,1,.2.6.3.8.5l-.6.6Z"/><path d="M229.3,177.6h0l1.9-4.9h1.4v6.4h-.9v-5.3h0l-2.1,5.3h-.6l-2.1-5.3h0v5.3h-.9v-6.4h1.4l1.9,4.9Z"/><path d="M236.1,178.2h3.3v.8h-4.2v-6.4h4.1v.8h-3.2v1.9h3v.8h-3v2.1Z"/><path d="M243.9,179h-.9v-5.6h-2v-.8h5v.8h-2v5.6Z"/><path d="M247.6,179h-1l2.8-6.4h.8l2.7,6.4h-1l-.6-1.6h-3l-.6,1.6ZM248.6,176.7h2.4l-1.2-3-1.2,3ZM250.1,172.2h-.7l.9-1.3h1l-1.2,1.3Z"/><path d="M255.7,178.2h2.8v.8h-3.7v-6.4h.9v5.6Z"/><path d="M261.4,179h-.9v-6.4h.9v6.4Z"/><path d="M269.4,178c-.3.3-.6.6-1,.8s-.9.3-1.4.3-.9,0-1.3-.2c-.4-.2-.8-.4-1.1-.7s-.5-.6-.7-1.1c-.2-.4-.3-.9-.3-1.4s0-.9.3-1.4c.2-.4.4-.8.7-1.1.3-.3.7-.5,1.1-.7s.9-.2,1.3-.2.4,0,.7,0,.4.1.6.2.4.2.6.3.3.3.4.4l-.7.5c-.2-.2-.4-.4-.7-.5-.3-.1-.6-.2-.9-.2s-.7,0-1,.2c-.3.1-.5.3-.8.6-.2.2-.4.5-.5.8-.1.3-.2.6-.2,1s0,.7.2,1c.1.3.3.6.5.8.2.2.5.4.8.5s.6.2,1,.2.7,0,1-.2c.3-.1.5-.4.7-.6l.7.5Z"/><path d="M271.6,179h-1l2.8-6.4h.8l2.7,6.4h-1l-.6-1.6h-3l-.6,1.6ZM272.5,176.7h2.4l-1.2-3-1.2,3Z"/><path d="M281.9,173.9c-.1-.2-.3-.3-.5-.4-.2-.1-.5-.2-.7-.2s-.3,0-.4,0c-.1,0-.3.1-.4.2s-.2.2-.3.3c0,.1-.1.3-.1.5s0,.3.1.4.2.2.3.3c.1,0,.3.2.4.2.2,0,.3.1.5.2.2,0,.4.1.7.2s.4.2.6.3c.2.1.3.3.4.5s.2.5.2.8,0,.6-.2.9c-.1.2-.3.4-.5.6s-.4.3-.7.4c-.3,0-.5.1-.8.1-.4,0-.8,0-1.2-.2-.4-.2-.7-.4-.9-.7l.7-.6c.1.2.3.4.6.5.3.1.5.2.8.2s.3,0,.4,0c.1,0,.3-.1.4-.2s.2-.2.3-.3c0-.1.1-.3.1-.5s0-.4-.1-.5c0-.1-.2-.2-.3-.3-.1,0-.3-.2-.5-.2-.2,0-.4-.1-.6-.2-.2,0-.4-.1-.6-.2-.2,0-.4-.2-.5-.3s-.3-.3-.4-.5c0-.2-.1-.4-.1-.7s0-.6.2-.8c.1-.2.3-.4.5-.6.2-.2.4-.3.7-.3.3,0,.5-.1.8-.1s.7,0,1,.2.6.3.8.5l-.6.6Z"/></svg>
+  <div class="eyebrow">Carregando modelo 3D</div>
   <div class="bar"><i id="prog"></i></div>
   <small id="progt">0 MB</small>
 </div></div>
@@ -126,17 +139,17 @@ import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 
 // Categories derived from Rhino layer names (order = legend order)
 const CATS=[
-  {id:'tes',label:'Tesouras',color:'#c8692c',test:n=>/TESOURA/.test(n)},
-  {id:'sp',label:'Suportes de terça',color:'#7d5ba6',test:n=>/^SP[ _]/.test(n)},
-  {id:'ter',label:'Terças',color:'#d9b13b',test:n=>/TERÇA/.test(n)},
-  {id:'pon',label:'Pontaletes',color:'#3f8fc4',test:n=>/PONT/.test(n)},
-  {id:'tra',label:'Travessas e mãos-francesas',color:'#8a5a3c',test:n=>/TRAVESSA|MAO FRANCESA/.test(n)},
-  {id:'esp',label:'Espigão e cumeeira',color:'#b8433f',test:n=>/ESPIG|CUMEEIRA/.test(n)},
-  {id:'cal',label:'Calhas e rufos',color:'#8f9aa3',test:n=>/CALHA|RUFO|PINGADEIRA/.test(n)},
-  {id:'acm',label:'ACM',color:'#e4e6e8',test:n=>/ACM/.test(n)},
-  {id:'per',label:'Perfis de fachada',color:'#3a8f6b',test:n=>/PERFIL/.test(n)},
-  {id:'apo',label:'Apoios, sapatas e colunas',color:'#4c5560',test:n=>/SAPATA|SUPORTE|COLUNA/.test(n)},
-  {id:'edi',label:'Edificação existente',color:'#cbbfae',test:()=>true},
+  {id:'tes',label:'Tesouras',color:'#00a1ff',test:n=>/TESOURA/.test(n)},
+  {id:'sp',label:'Suportes de terça',color:'#7a5cc7',test:n=>/^SP[ _]/.test(n)},
+  {id:'ter',label:'Terças',color:'#f0b429',test:n=>/TERÇA/.test(n)},
+  {id:'pon',label:'Pontaletes',color:'#1f4e79',test:n=>/PONT/.test(n)},
+  {id:'tra',label:'Travessas e mãos-francesas',color:'#e0662f',test:n=>/TRAVESSA|MAO FRANCESA/.test(n)},
+  {id:'esp',label:'Espigão e cumeeira',color:'#d43d51',test:n=>/ESPIG|CUMEEIRA/.test(n)},
+  {id:'cal',label:'Calhas e rufos',color:'#9aa6b1',test:n=>/CALHA|RUFO|PINGADEIRA/.test(n)},
+  {id:'acm',label:'ACM',color:'#e9edf0',test:n=>/ACM/.test(n)},
+  {id:'per',label:'Perfis de fachada',color:'#2f9e77',test:n=>/PERFIL/.test(n)},
+  {id:'apo',label:'Apoios, sapatas e colunas',color:'#3a4450',test:n=>/SAPATA|SUPORTE|COLUNA/.test(n)},
+  {id:'edi',label:'Edificação existente',color:'#d5d0c7',test:()=>true},
 ];
 const catOf=name=>CATS.find(c=>c.test(name.toUpperCase()));
 
@@ -161,7 +174,7 @@ new MutationObserver(setBg).observe(document.documentElement,{attributes:true,at
 const clip=new THREE.Plane(new THREE.Vector3(0,-1,0),1e6);
 const mats={};
 for(const c of CATS){mats[c.id]=new THREE.MeshStandardMaterial({color:c.color,metalness:c.id==='edi'?0:0.35,roughness:0.55,flatShading:true,side:THREE.DoubleSide,clippingPlanes:[clip]});}
-const hiMat=new THREE.MeshStandardMaterial({color:0xff7a1a,emissive:0x5a2000,metalness:0.2,roughness:0.5,flatShading:true,side:THREE.DoubleSide,clippingPlanes:[clip]});
+const hiMat=new THREE.MeshStandardMaterial({color:0xff3d7f,emissive:0x5a0020,metalness:0.2,roughness:0.5,flatShading:true,side:THREE.DoubleSide,clippingPlanes:[clip]});
 
 const groups={}; let box=new THREE.Box3(), size=new THREE.Vector3(), center=new THREE.Vector3();
 const prog=document.getElementById('prog'), progt=document.getElementById('progt');
@@ -225,7 +238,9 @@ function setView(v,smooth=true){
   if(!smooth||matchMedia('(prefers-reduced-motion: reduce)').matches){camera.position.copy(to);controls.target.copy(tgt);controls.update();return;}
   anim={p0:camera.position.clone(),t0:controls.target.clone(),p1:to,t1:tgt,s:performance.now()};
 }
-document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+const vbtn=document.querySelectorAll('[data-view]');
+vbtn.forEach(b=>b.onclick=()=>{vbtn.forEach(x=>x.classList.toggle('on',x===b));setView(b.dataset.view);});
+vbtn[0].classList.add('on');
 
 // Section cut
 const cut=document.getElementById('cut'), cutv=document.getElementById('cutv');
