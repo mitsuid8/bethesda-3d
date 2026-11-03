@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Cobertura Bethesda 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-bleed 3D viewport, floating spec panel on the left (bottom sheet on phones) */
+:root{
+  --bg:#e9ecef; --sky:#dfe4e8; --panel:#ffffffee; --fg:#1d242b; --muted:#5d6872; --line:#d3d9de;
+  --accent:#d1631f; --chip:#f1f3f5;
+  --f-display:"Archivo",system-ui,sans-serif; --f-body:"Archivo",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14181c; --sky:#1b2026; --panel:#1d2329ee; --fg:#e6eaee; --muted:#93a0ab; --line:#2e363e; --accent:#ef8a45; --chip:#262d34; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14181c; --sky:#1b2026; --panel:#1d2329ee; --fg:#e6eaee; --muted:#93a0ab; --line:#2e363e; --accent:#ef8a45; --chip:#262d34; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-size:14px}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);overflow:hidden}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;width:100%;height:100%;touch-action:none}
+.panel{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));width:300px;max-height:calc(100% - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));
+  display:flex;flex-direction:column;background:var(--panel);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:10px;overflow:hidden;z-index:5}
+.head{padding:14px 16px 12px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+.head .t{flex:1;min-width:0}
+.eyebrow{font:500 10.5px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font:700 19px/1.15 var(--f-display);margin:6px 0 4px;text-wrap:balance}
+.sub{font-size:12.5px;color:var(--muted)}
+#toggle{display:none;background:var(--chip);border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:6px 10px;font:500 12px var(--f-body);cursor:pointer}
+.body{overflow:auto;padding:12px 16px 16px;display:flex;flex-direction:column;gap:16px}
+.sec h2{font:600 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.views{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+button.v{background:var(--chip);border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:7px 0;font:500 12px var(--f-body);cursor:pointer}
+button.v:hover,#toggle:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible,label.cat:focus-within{outline:2px solid var(--accent);outline-offset:1px}
+.cats{display:flex;flex-direction:column;gap:2px}
+label.cat{display:grid;grid-template-columns:auto 14px 1fr auto;gap:9px;align-items:center;padding:6px 6px;border-radius:6px;cursor:pointer;font-size:13px}
+label.cat:hover{background:var(--chip)}
+label.cat input{margin:0;accent-color:var(--accent)}
+.sw{width:14px;height:14px;border-radius:3px;border:1px solid #0003}
+.n{font:400 11px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.row{display:flex;gap:8px;align-items:center;font-size:12.5px}
+.row input[type=range]{flex:1;accent-color:var(--accent)}
+.mini{display:flex;gap:6px}
+.mini button{flex:1}
+#info{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(16px + env(safe-area-inset-top,0px));background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;z-index:5;max-width:260px}
+#info b{display:block;font-weight:600;margin-bottom:2px}
+#info span{color:var(--muted);font:400 11.5px var(--f-mono)}
+#loader{position:fixed;inset:0;display:grid;place-items:center;z-index:10;background:var(--bg)}
+#loader .box{width:min(320px,80vw);text-align:center;display:flex;flex-direction:column;gap:10px}
+.bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+#loader small{font:400 12px var(--f-mono);color:var(--muted)}
+.hint{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom,0px));right:max(16px,env(safe-area-inset-right,0px));font:400 11.5px var(--f-mono);color:var(--muted);z-index:4;text-align:right}
+@media (max-width:700px){
+  .panel{top:auto;bottom:0;left:0;right:0;width:auto;border-radius:12px 12px 0 0;max-height:60%;padding-bottom:env(safe-area-inset-bottom,0px)}
+  .head{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .body{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .panel.closed .body{display:none}
+  #toggle{display:block}
+  .hint{display:none}
+  #info{left:max(16px,env(safe-area-inset-left,0px));right:auto}
+}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+
+<div id="stage"></div>
+
+<aside class="panel" id="panel">
+  <div class="head">
+    <div class="t">
+      <div class="eyebrow">Comforma · Perville</div>
+      <h1>Cobertura Bethesda</h1>
+      <div class="sub">Estrutura metálica da cobertura, modelo V4</div>
+    </div>
+    <button id="toggle" type="button" aria-expanded="false">Opções</button>
+  </div>
+  <div class="body">
+    <div class="sec">
+      <h2>Vistas</h2>
+      <div class="views">
+        <button class="v" data-view="iso" type="button">3D</button>
+        <button class="v" data-view="top" type="button">Topo</button>
+        <button class="v" data-view="front" type="button">Frente</button>
+        <button class="v" data-view="side" type="button">Lateral</button>
+      </div>
+    </div>
+    <div class="sec">
+      <h2>Elementos</h2>
+      <div class="cats" id="cats"></div>
+      <div class="mini" style="margin-top:8px">
+        <button class="v" id="all" type="button">Mostrar tudo</button>
+        <button class="v" id="none" type="button">Ocultar tudo</button>
+      </div>
+    </div>
+    <div class="sec">
+      <h2>Corte horizontal</h2>
+      <div class="row"><input type="range" id="cut" min="0" max="1000" value="1000" aria-label="Altura do corte"><span class="n" id="cutv">sem corte</span></div>
+    </div>
+  </div>
+</aside>
+
+<div id="info" hidden><b id="infoName"></b><span id="infoCat"></span></div>
+<div class="hint">arrastar: girar · botão direito/2 dedos: mover · roda/pinça: zoom · clique: identificar peça</div>
+
+<div id="loader"><div class="box">
+  <div class="eyebrow">Carregando modelo</div>
+  <div class="bar"><i id="prog"></i></div>
+  <small id="progt">0 MB</small>
+</div></div>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+
+// Categories derived from Rhino layer names (order = legend order)
+const CATS=[
+  {id:'tes',label:'Tesouras',color:'#c8692c',test:n=>/TESOURA/.test(n)},
+  {id:'sp',label:'Suportes de terça',color:'#7d5ba6',test:n=>/^SP[ _]/.test(n)},
+  {id:'ter',label:'Terças',color:'#d9b13b',test:n=>/TERÇA/.test(n)},
+  {id:'pon',label:'Pontaletes',color:'#3f8fc4',test:n=>/PONT/.test(n)},
+  {id:'tra',label:'Travessas e mãos-francesas',color:'#8a5a3c',test:n=>/TRAVESSA|MAO FRANCESA/.test(n)},
+  {id:'esp',label:'Espigão e cumeeira',color:'#b8433f',test:n=>/ESPIG|CUMEEIRA/.test(n)},
+  {id:'cal',label:'Calhas e rufos',color:'#8f9aa3',test:n=>/CALHA|RUFO|PINGADEIRA/.test(n)},
+  {id:'acm',label:'ACM',color:'#e4e6e8',test:n=>/ACM/.test(n)},
+  {id:'per',label:'Perfis de fachada',color:'#3a8f6b',test:n=>/PERFIL/.test(n)},
+  {id:'apo',label:'Apoios, sapatas e colunas',color:'#4c5560',test:n=>/SAPATA|SUPORTE|COLUNA/.test(n)},
+  {id:'edi',label:'Edificação existente',color:'#cbbfae',test:()=>true},
+];
+const catOf=name=>CATS.find(c=>c.test(name.toUpperCase()));
+
+const stage=document.getElementById('stage');
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.localClippingEnabled=true;
+stage.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+const pmrem=new THREE.PMREMGenerator(renderer);
+scene.environment=pmrem.fromScene(new RoomEnvironment(),0.04).texture;
+const camera=new THREE.PerspectiveCamera(40,1,0.05,2000);
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true; controls.dampingFactor=0.08; controls.screenSpacePanning=true;
+scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f94,0.6));
+const sun=new THREE.DirectionalLight(0xffffff,1.6); sun.position.set(30,50,20); scene.add(sun);
+
+function setBg(){const c=getComputedStyle(document.documentElement).getPropertyValue('--sky').trim();scene.background=new THREE.Color(c||'#dfe4e8');}
+setBg(); matchMedia('(prefers-color-scheme: dark)').addEventListener('change',setBg);
+new MutationObserver(setBg).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+const clip=new THREE.Plane(new THREE.Vector3(0,-1,0),1e6);
+const mats={};
+for(const c of CATS){mats[c.id]=new THREE.MeshStandardMaterial({color:c.color,metalness:c.id==='edi'?0:0.35,roughness:0.55,flatShading:true,side:THREE.DoubleSide,clippingPlanes:[clip]});}
+const hiMat=new THREE.MeshStandardMaterial({color:0xff7a1a,emissive:0x5a2000,metalness:0.2,roughness:0.5,flatShading:true,side:THREE.DoubleSide,clippingPlanes:[clip]});
+
+const groups={}; let box=new THREE.Box3(), size=new THREE.Vector3(), center=new THREE.Vector3();
+const prog=document.getElementById('prog'), progt=document.getElementById('progt');
+// model-data.js: per-layer header + gzip'd blob (uint16 quantized positions, delta-coded int32 indices), base64
+const DATA_BYTES=5265113;
+async function loadModel(){
+  const res=await fetch('model-data.js'); if(!res.ok)throw new Error(res.status);
+  const total=+res.headers.get('content-length')||DATA_BYTES;
+  const rd=res.body.getReader(); const parts=[]; let got=0;
+  for(;;){const {done,value}=await rd.read(); if(done)break; parts.push(value); got+=value.length;
+    progt.textContent=(got/1048576).toFixed(1)+' MB'; prog.style.width=Math.min(100,100*got/total)+'%';}
+  progt.textContent='Montando o modelo…';
+  const txt=await new Blob(parts).text();
+  const hdr=JSON.parse(txt.slice(txt.indexOf('=')+1,txt.indexOf(';\n')));
+  const b64=txt.slice(txt.indexOf('"',txt.indexOf('MODEL_GZ'))+1,txt.lastIndexOf('"'));
+  const gz=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
+  const buf=await new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+  const root=new THREE.Group();
+  for(const h of hdr){
+    const q=new Uint16Array(buf,h.po,h.nv*3), pos=new Float32Array(h.nv*3);
+    for(let i=0;i<h.nv*3;i++)pos[i]=h.lo[i%3]+q[i]*h.sc[i%3];
+    const d=new Int32Array(buf,h.io,h.nf*3), idx=new Uint32Array(h.nf*3); let a=0;
+    for(let i=0;i<d.length;i++){a+=d[i];idx[i]=a;}
+    const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(pos,3)); g.setIndex(new THREE.BufferAttribute(idx,1));
+    g.computeBoundingSphere();
+    const c=catOf(h.name), m=new THREE.Mesh(g,mats[c.id]); m.userData={layer:h.name,cat:c};
+    (groups[c.id]??=[]).push(m); root.add(m);
+  }
+  scene.add(root);
+  box.setFromObject(root); box.getSize(size); box.getCenter(center);
+  const grid=new THREE.GridHelper(Math.ceil(Math.max(size.x,size.z)*1.4),Math.ceil(Math.max(size.x,size.z)*1.4/5),0x888888,0x888888);
+  grid.material.transparent=true; grid.material.opacity=0.18; grid.position.set(center.x,box.min.y-0.01,center.z); scene.add(grid);
+  buildLegend(); setView('iso',false);
+  document.getElementById('loader').hidden=true;
+}
+loadModel().catch(err=>{progt.textContent='Não foi possível carregar o modelo. Recarregue a página.';console.error(err);});
+
+function buildLegend(){
+  const el=document.getElementById('cats');
+  for(const c of CATS){
+    if(!groups[c.id])continue;
+    const lab=document.createElement('label'); lab.className='cat';
+    const pcs=groups[c.id].length;
+    lab.innerHTML=`<input type="checkbox" checked id="cb-${c.id}"><span class="sw" style="background:${c.color}"></span><span>${c.label}</span><span class="n">${pcs} cam.</span>`;
+    lab.querySelector('input').addEventListener('change',e=>{groups[c.id].forEach(m=>m.visible=e.target.checked);});
+    el.appendChild(lab);
+  }
+}
+function setAll(v){for(const c of CATS){if(!groups[c.id])continue;groups[c.id].forEach(m=>m.visible=v);document.getElementById('cb-'+c.id).checked=v;}}
+document.getElementById('all').onclick=()=>setAll(true);
+document.getElementById('none').onclick=()=>setAll(false);
+
+// Views
+let anim=null;
+function setView(v,smooth=true){
+  const vf=THREE.MathUtils.degToRad(camera.fov/2), hf=Math.atan(Math.tan(vf)*camera.aspect);
+  const r=size.length()/2*0.72/Math.sin(Math.min(vf,hf));
+  const dirs={iso:[1,0.75,1.1],top:[0,1,0.0001],front:[0,0.12,1],side:[1,0.12,0]};
+  const d=new THREE.Vector3(...dirs[v]).normalize();
+  const to=center.clone().addScaledVector(d,r), tgt=center.clone();
+  if(!smooth||matchMedia('(prefers-reduced-motion: reduce)').matches){camera.position.copy(to);controls.target.copy(tgt);controls.update();return;}
+  anim={p0:camera.position.clone(),t0:controls.target.clone(),p1:to,t1:tgt,s:performance.now()};
+}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+
+// Section cut
+const cut=document.getElementById('cut'), cutv=document.getElementById('cutv');
+cut.oninput=()=>{
+  const f=cut.value/1000;
+  if(f>=1){clip.constant=1e6;cutv.textContent='sem corte';return;}
+  const y=box.min.y+f*size.y; clip.constant=y;
+  cutv.textContent=('+'+((y-box.min.y)).toFixed(2)+' m').replace('+-','-');
+};
+
+// Pick
+const ray=new THREE.Raycaster(); const ptr=new THREE.Vector2(); let picked=null, down=null;
+const info=document.getElementById('info');
+renderer.domElement.addEventListener('pointerdown',e=>down=[e.clientX,e.clientY]);
+renderer.domElement.addEventListener('pointerup',e=>{
+  if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>5)return;
+  const r=renderer.domElement.getBoundingClientRect();
+  ptr.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
+  ray.setFromCamera(ptr,camera);
+  const vis=[];scene.traverse(o=>{if(o.isMesh&&o.visible&&o.userData.cat)vis.push(o)});
+  const hit=ray.intersectObjects(vis,false).find(h=>clip.constant>1e5||h.point.y<=clip.constant);
+  if(picked){picked.material=mats[picked.userData.cat.id];picked=null;}
+  if(hit){picked=hit.object;picked.material=hiMat;
+    document.getElementById('infoName').textContent=picked.userData.layer;
+    document.getElementById('infoCat').textContent=picked.userData.cat.label;info.hidden=false;}
+  else info.hidden=true;
+});
+
+// Mobile panel
+const panel=document.getElementById('panel'), tg=document.getElementById('toggle');
+if(matchMedia('(max-width:700px)').matches)panel.classList.add('closed');
+tg.onclick=()=>{const c=panel.classList.toggle('closed');tg.setAttribute('aria-expanded',String(!c));};
+
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+addEventListener('resize',resize); resize();
+renderer.setAnimationLoop(()=>{
+  if(anim){const k=Math.min(1,(performance.now()-anim.s)/700),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    camera.position.lerpVectors(anim.p0,anim.p1,e);controls.target.lerpVectors(anim.t0,anim.t1,e);if(k>=1)anim=null;}
+  controls.update(); renderer.render(scene,camera);
+});
+</script>
+</body>
+</html>
